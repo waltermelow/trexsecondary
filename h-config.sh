@@ -112,7 +112,7 @@ EOF
   notes=`echo Generated at $(date)`
   conf=`jq --null-input --argjson conf "$conf" --arg notes "$notes" -n '$conf | ._notes = $notes'`
 
-  api='{"api-bind-http": "127.0.0.1:'$MINER_API_PORT'"}'
+  api='{"api-bind-http": "0.0.0.0:'$MINER_API_PORT'"}'
   conf=`jq --null-input --argjson conf "$conf" --argjson api "$api" -n '$conf + $api'`
 
   echo "$conf" > $MINER_CONFIG
