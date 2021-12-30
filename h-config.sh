@@ -1,5 +1,24 @@
 #!/usr/bin/env bash
 
+# DML Ini
+function miner_echo_config_file() {
+	echo -e "${YELLOW}=== $1 =================================================${NOCOLOR}"
+	cat $1
+	echo ""
+}
+# Checks in target of symlink exists
+function mkfile_from_symlink() {
+	[[ -z $1 ]] && return 1
+	[[ ! -L $1 ]] && return 1 #not a symlink
+	[[ -e $1 ]] && return 0 #symlink point to existing file
+	local f=`readlink "$1"`
+	local d=`dirname "$f"`
+	[[ ! -d $d ]] && mkdir -p "$d" #&& echo "Creating $d"
+	touch $f #&& echo "Touching $f"
+	chown -R user "$d"
+}
+# DML Fin
+
 function miner_ver() {
   local MINER_VER=$TREX_VER
   if [[ -z $MINER_VER ]]; then
@@ -12,12 +31,12 @@ function miner_ver() {
 
 function miner_config_echo() {
   local MINER_VER=`miner_ver`
-  miner_echo_config_file "$MINER_DIR/$MINER_VER/config.json"
+  miner_echo_config_file "$MINER_DIR/$CUSTOM_MINER/$MINER_VER/config.json"
 }
 
 function miner_config_gen() {
-  local MINER_CONFIG="$MINER_DIR/$MINER_VER/config.json"
-  local TREX_GLOBAL_CONFIG="$MINER_DIR/$MINER_VER/config_global.json"
+  local MINER_CONFIG="$MINER_DIR/$CUSTOM_MINER/$MINER_VER/config.json"
+  local TREX_GLOBAL_CONFIG="$MINER_DIR/$CUSTOM_MINER/$MINER_VER/config_global.json"
   mkfile_from_symlink $MINER_CONFIG
 
   #[[ -z $TREX_ALGO ]] && echo -e "${YELLOW}TREX_ALGO is empty${NOCOLOR}" && return 1
@@ -117,3 +136,8 @@ EOF
 
   echo "$conf" > $MINER_CONFIG
 }
+
+# DML Ini
+miner_config_gen
+miner_config_echo
+# DML Fin

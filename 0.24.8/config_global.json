@@ -18,7 +18,7 @@
   "algo": "ethash",
   "validate-shares": true,
 
-  "log-path": "/var/log/miner/t-rex/t-rex.log",
+  "log-path": "/var/log/miner/trexsecondary/trexsecondary.log",
 
   "exit-on-cuda-error": true,
   "exit-on-connection-lost": false
