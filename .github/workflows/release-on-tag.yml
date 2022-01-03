@@ -1,0 +1,64 @@
+# Fuente: https://github.com/actions/create-release#example-workflow---create-a-release
+# Fuente: https://github.com/marketplace/actions/github-release
+# Fuente: https://github.com/elgohr/Github-Release-Action
+# NOTA: Para obtener el nombre del tag, utilizar la variable ${{ github.ref_name }}
+
+## # Fuente: https://github.com/marvinpinto/action-automatic-releases
+## name: "tagged-release"
+##
+## on:
+##   push:
+##     tags:
+##       - "v*"
+##
+## jobs:
+##   tagged-release:
+##     name: "Tagged Release"
+##     runs-on: "ubuntu-latest"
+##
+##     steps:
+##       # ...
+##       - name: "Build & test"
+##         run: |
+##           echo "done!"
+##
+##       - uses: "marvinpinto/action-automatic-releases@latest"
+##         with:
+##           repo_token: "${{ secrets.RELEASE_TOKEN }}"
+##           draft: false
+##           prerelease: false
+##           # title: Release title; defaults to the tag name if none specified
+##           files: |
+##             *.tar.gz
+
+
+# Fuente: https://github.com/meeDamian/github-release
+name: "tagged-release"
+on:
+  push:
+    tags:
+      - "v*"
+jobs:
+  tagged-release:
+    name: "Tagged Release"
+    runs-on: "ubuntu-latest"
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set enviroment for github-release
+        run: |
+          mkdir -p "release" && tar --exclude='.github' --exclude='.idea' --exclude='*.png' --exclude='.git' --exclude='release' --warning=no-file-changed -zcvf "release/trexsecondary-${{ github.ref_name }}.tar.gz" *
+
+      - uses: meeDamian/github-release@2.0
+        with:
+          token: ${{ secrets.RELEASE_TOKEN }}
+          # tag: ${{ env.MY_CUSTOM_TAG }} # tag: If triggered by git tag push, tag is picked up automatically. Otherwise tag: has to be set.
+          name: T-Rex Secondary ${{ github.ref_name }}
+          # body: >
+          #   This release actually changes the fabric of the reality, so be careful
+          #   while applying, as error in database migration, can irrecoverably wipe
+          #   some laws of physics.
+          # gzip: Set whether to gzip uploaded assets, or not. Available options are: true, false, and folders which uploads files unchanged, but compresses directories/folders. Defaults to true. Note: it errors if set to false, and files: argument contains path to a directory.
+          gzip: false
+          files: >
+            release/trexsecondary-${{ github.ref_name }}.tar.gz
